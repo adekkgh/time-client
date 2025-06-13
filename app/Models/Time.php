@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Time extends Model
 {
-    protected $table = 'server_time';
+    protected $table = 'gioev_timestamps';
 
     protected $fillable = [
         'server_time',

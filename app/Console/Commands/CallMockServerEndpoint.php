@@ -36,9 +36,9 @@ class CallMockServerEndpoint extends Command
         );
 
         if ($response->successful()) {
-            $this->info('Mock server called SUCCESSFULLY! Current time: ' . $response['server_time']);
+            $this->info('Имитация получения запроса с сервера успешна! Текущее время: ' . $response['server_time']);
         } else {
-            $this->error('Mock server called with ERROR! Response: ' . $response->body());
+            $this->error('Имитация получения запроса с сервера завершилась ошибкой! Ответ: ' . $response->body());
         }
 
         return 0;

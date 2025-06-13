@@ -35,8 +35,6 @@ class TimeController extends Controller
             'end_date' => 'required|date|after_or_equal:start_date',
             'page' => 'nullable|integer|min:1',
             'per_page' => 'nullable|integer|min:1|max:100',
-            //'n' => 'nullable|integer|min:1',
-            //'offset' => 'nullable|integer|min:0',
         ]);
 
         $per_page = $request->input("per_page", 10);
@@ -47,24 +45,5 @@ class TimeController extends Controller
             ->paginate($per_page);
 
         return response()->json($entries);
-
-//        $n = $request->input('n', 10);
-//        $offset = $request->input('offset', 0);
-//
-//        $query = Time::where('server_time', '>=', $request->start_date)
-//            ->where('server_time', '<=', $request->end_date)
-//            ->orderBy('server_time', 'desc');
-//
-//        $totalCount = $query->count();
-//
-//        $entries = $query
-//            ->skip($offset)
-//            ->take($n)
-//            ->get();
-//
-//        return response()->json([
-//            'data' => $entries,
-//            'has_more' => ($offset + $n) < $totalCount,
-//        ]);
     }
 }
