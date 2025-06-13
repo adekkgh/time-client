@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('server_time', function (Blueprint $table) {
+        Schema::create('gioev_timestamps', function (Blueprint $table) {
             $table->id();
             $table->timestamp('server_time');
             $table->timestamps();
@@ -23,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('server_time');
+        Schema::dropIfExists('gioev_timestamps');
     }
 };
