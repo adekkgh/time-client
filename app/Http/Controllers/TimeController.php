@@ -31,18 +31,32 @@ class TimeController extends Controller
     // get list of received from server time entries within requested time period
     public function getTimeEntries(Request $request) {
         $request->validate([
-            'start_date' => 'required|date',
-            'end_date' => 'required|date|after_or_equal:start_date',
+            'start_date' => 'required|date_format:Y-m-d\TH:i',
+            'end_date' => 'required|date_format:Y-m-d\TH:i|after_or_equal:start_date',
             'page' => 'nullable|integer|min:1',
             'per_page' => 'nullable|integer|min:1|max:100',
         ]);
 
-        $per_page = $request->input("per_page", 10);
+        $perPage = $request->input("per_page", 10);
 
-        $entries = Time::where('server_time', '>=', $request->start_date)
-            ->where('server_time', '<=', $request->end_date)
+        $timeZone = 'Europe/Moscow';
+
+        $start = Carbon::createFromFormat('Y-m-d\TH:i', $request->start_date, $timeZone)
+            ->timezone('UTC')
+            ->startOfMinute();
+        $end = Carbon::createFromFormat('Y-m-d\TH:i', $request->end_date, $timeZone)
+            ->timezone('UTC')
+            ->startOfMinute();
+
+        $entries = Time::whereBetween('server_time', [$start, $end])
             ->orderBy('server_time', 'desc')
-            ->paginate($per_page);
+            ->paginate($perPage);
+
+        $entries->getCollection()->transform(function ($entry) use ($timeZone) {
+            $entry->server_time = Carbon::parse($entry->server_time)->timezone($timeZone)->format('Y-m-d H:i:s');
+
+            return $entry;
+        });
 
         return response()->json($entries);
     }

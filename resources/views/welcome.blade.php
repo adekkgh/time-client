@@ -9,29 +9,29 @@
 <div class="max-w-2xl mx-auto bg-white p-6 rounded-xl shadow">
     <h1 class="text-2xl font-bold mb-4 text-center">📅 Получить записи по времени</h1>
 
-    <form id="filterForm" class="space-y-4">
+    <form id="filterForm" class="space-y-4 flex flex-col">
         <div class="flex flex-col">
             <label>Начальная дата:</label>
-            <input type="date" name="start_date" class="border p-2 rounded" required>
+            <input type="datetime-local" step="60" name="start_date" class="border p-2 rounded" required>
         </div>
         <div class="flex flex-col">
             <label>Конечная дата:</label>
-            <input type="date" name="end_date" class="border p-2 rounded" required>
+            <input type="datetime-local" step="60" name="end_date" class="border p-2 rounded" required>
         </div>
-        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 max-w-[200px] self-center">
             🔍 Получить данные
         </button>
     </form>
 
-    <div id="results" class="mt-6"></div>
+    <div id="results" class="mt-6 flex flex-col"></div>
 </div>
 
 <script>
     const form       = document.getElementById('filterForm');
     const resultsDiv = document.getElementById('results');
 
-    let currentPage  = 1;          // ← теперь считаем страницы
-    const perPage    = 10;         // ← сколько записей на страницу
+    let currentPage  = 1;
+    const perPage    = 10;
     let startDate, endDate;
 
     async function fetchEntries() {
@@ -42,14 +42,12 @@
         const response = await fetch(url);
         const result   = await response.json();
 
-        // Отобразить сообщение, если совсем нет данных
         if ((!result.data || result.data.length === 0) && currentPage === 1) {
             resultsDiv.innerHTML =
                 '<p class="text-gray-500">Нет данных за указанный период.</p>';
             return;
         }
 
-        // Первая страница — создаём список заново
         if (currentPage === 1) {
             resultsDiv.innerHTML = '<ul id="entryList" class="space-y-2"></ul>';
         }
@@ -62,17 +60,15 @@
             list.appendChild(li);
         });
 
-        // Подготовка к следующей странице
         currentPage++;
 
-        // Кнопка «Загрузить ещё»
         let btn = document.getElementById('loadMoreBtn');
-        if (result.next_page_url) {          // есть ещё страницы
+        if (result.next_page_url) {
             if (!btn) {
                 btn = document.createElement('button');
                 btn.id = 'loadMoreBtn';
                 btn.textContent = '⬇ Загрузить ещё';
-                btn.className = 'mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600';
+                btn.className = 'mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 self-center';
                 btn.onclick = fetchEntries;
                 resultsDiv.appendChild(btn);
             }
@@ -83,9 +79,9 @@
 
     form.addEventListener('submit', (e) => {
         e.preventDefault();
-        currentPage = 1;                                 // сброс
-        startDate   = form.start_date.value;
-        endDate     = form.end_date.value;
+        currentPage = 1;
+        startDate = encodeURIComponent(form.start_date.value);
+        endDate   = encodeURIComponent(form.end_date.value);
         fetchEntries();
     });
 </script>

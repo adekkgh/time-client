@@ -28,6 +28,7 @@ class CallMockServerEndpoint extends Command
     {
         $response = Http::post(
             'http://127.0.0.1:8000/api/v1/mock-server',
+            //'http://83.217.223.164/api/v1/mock-server',
             [
                 'data' => [
                     'timestamp' => now()->toIso8601ZuluString(),
